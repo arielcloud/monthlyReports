@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+<script src="angular-chart.min.js"></script>
+<!-- bootstrap -->
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>-->
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+<!--less-->
+<link rel="stylesheet/less" type="text/css" href="style.less" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.7.2/less.min.js"></script>
+
+<script src="reportsController.js"></script>
+</head>
+<body>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+
+    <div ng-repeat="usageSummary in viewData">
+        <header class="flexbox-container">
+            <img src="logo_clean.png"/>
+            <div class="header-title">
+                <span class="slashes">// </span>
+                <span>Monthly Usage Report</span>
+            </div>
+            <div class="date" style="margin-left: auto;">{{currentDate | date:'yyyy-MM-dd'}}</div>
+        </header>
+        <section>
+            <div class="title">
+                <span>{{subscriptionName}}</span>
+                 -
+                <span>{{ReportStartDateMonthYear}}</span>
+            </div>
+            <div class="title2">Monthly Usage Report: {{usageSummary.UomReadableName}}</div>
+
+            <canvas height="20" width="200" id="line" class="chart chart-line" chart-data="usageSummary.data"
+                    chart-labels="labels" chart-series="usageSummary.seriesNames" chart-options="options" chart-colors="['#579bd5', '#f4bb93', '#a6a6a6']" chart-dataset-override="overrides">
+            </canvas>
+
+            <div class="flexbox-container">
+
+                    <table ng-repeat="tableIndex in [1,2]">
+                        <thead>
+                        <tr class="with-border-bottom">
+                            <th ng-repeat="col in usageSummary.tableColsNames">
+                                {{col}}
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="row in usageSummary.tableUsagePerDayRows" ng-if="tableIndex == 1 ? $index < (daysInReportMonth / 2) : $index >= (daysInReportMonth / 2)" class="with-border-bottom">
+                            <td ng-repeat="cell in row track by $index" ng-style="{{cell.style}}">
+                                {{cell.data}}
+                            </td>
+                        </tr>
+                        <tr ng-if="tableIndex == 2 && daysInReportMonth % 2 == 1" class="with-border-bottom">
+                            <td ng-repeat="cell in usageSummary.tableUsagePerDayRows[0] track by $index">
+
+                            </td>
+                        </tr>
+                        <tr ng-if="tableIndex == 2" class="table-last-row">
+                            <td ng-repeat="cell in usageSummary.lastRow track by $index">
+                                {{cell}}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+            </div>
+
+            <table class="table-summary" ng-repeat="table in usageSummary.summaryTable">
+                <tr ng-repeat="row in table" ng-class="{'row-with-background': row[2] == 'background', 'summary-table-first-row': row[2] == 'bold'}" class="with-border-bottom">
+                    <td ng-repeat="cell in row | filter: '!background': true | filter: '!bold': true " ng-class="$index == 0 ? 'text-left' : 'text-right' ">
+                        {{cell}}
+                    </td>
+                </tr>
+            </table>
+
+            <div class="results">
+
+            </div>
+        </section>
+    </div>
+    <div class="total-overage">{{}}</div>
+
+
+
+</div>
+
+<script>
+
+</script>
+
+</body>
+</html>
